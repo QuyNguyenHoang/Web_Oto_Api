@@ -5,7 +5,7 @@ namespace Oto_Api.BackEnd.Controllers.UserManager
 {
     public class UserManager : Controller
     {
-        [Authorize]
+        [Authorize(Roles ="admin")]
         [HttpGet("GetUserData")]
         public IActionResult GetUserData()
         {
