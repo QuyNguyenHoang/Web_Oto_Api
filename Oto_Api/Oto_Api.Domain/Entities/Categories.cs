@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Oto_Api.Domain.Entities
 {
-    public class Categorys
+    public class Categories
     {
         [Key]
         [Required]

@@ -31,7 +31,7 @@ namespace Oto_Api.Infrastructure.Data
         public DbSet<Prices> Prices { get; set; }
         public DbSet<UserInfo> UserInfos { get; set; }
         public DbSet<Cart> Carts { get; set; }
-        public DbSet<Categorys> Categorys { get; set; }
+        public DbSet<Categories> Categories { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<InvoiceDetail> InvoicesDetail { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }

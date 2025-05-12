@@ -28,7 +28,7 @@ namespace Oto_Api.Domain.Entities
         // Khóa ngoại đến Category
         [ForeignKey("CategoryId")]
         public int CategoryId { get; set; }
-        public virtual Categorys? Category { get; set; }
+        public virtual Categories? Categories { get; set; }
 
         public virtual ICollection<Stocks>? Stocks { get; set; }
         public virtual ICollection<Pictures>? Pictures { get; set; }

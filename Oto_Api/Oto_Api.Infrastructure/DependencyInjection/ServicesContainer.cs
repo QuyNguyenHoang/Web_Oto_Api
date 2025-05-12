@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Oto_Api.Application.DTOs.Auth;
 using Oto_Api.Application.Interfaces;
 using Oto_Api.Domain.Entities;
+using Oto_Api.Infrastructure.Category;
 using Oto_Api.Infrastructure.Data;
 using Oto_Api.Infrastructure.Services;
 using System;
@@ -89,6 +90,7 @@ namespace Oto_APIs.Infrastructure.DepnedencyInjection
             // Đăng ký EmailSender
             services.Configure<EmailSettings>(config.GetSection("EmailSettings"));
             services.AddSingleton<IEmailSender, EmailSender>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             return services;
 
         }
