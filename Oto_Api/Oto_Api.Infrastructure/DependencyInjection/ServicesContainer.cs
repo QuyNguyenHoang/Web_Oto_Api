@@ -11,6 +11,7 @@ using Oto_Api.Application.Interfaces;
 using Oto_Api.Domain.Entities;
 using Oto_Api.Infrastructure.Category;
 using Oto_Api.Infrastructure.Data;
+using Oto_Api.Infrastructure.Product;
 using Oto_Api.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
@@ -91,6 +92,7 @@ namespace Oto_APIs.Infrastructure.DepnedencyInjection
             services.Configure<EmailSettings>(config.GetSection("EmailSettings"));
             services.AddSingleton<IEmailSender, EmailSender>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             return services;
 
         }
