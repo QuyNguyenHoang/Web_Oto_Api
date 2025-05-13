@@ -52,7 +52,7 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
             {
                 return BadRequest(new { error = true, message = $"Not found product with id = {id}" });
             }
-            bool EditProduct = await _repository.EditProductAsync(productDto);
+            bool EditProduct = await _repository.EditProductAsync(id,productDto);
             if (!EditProduct)
             {
                 return BadRequest(new { error = true, message = $"Can not Update Product with id = {id}" });
