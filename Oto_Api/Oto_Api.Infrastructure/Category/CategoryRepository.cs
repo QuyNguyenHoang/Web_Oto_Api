@@ -126,7 +126,7 @@ namespace Oto_Api.Infrastructure.Category
         public async Task<List<Categories>> SearchCategoriesAsync(string searchTerm, int pageNumber, int pageSize)
         {
             return await _context.Categories
-                                 .Where(c => c.CategoryName.Contains(searchTerm)) 
+                                 .Where(c => c.CategoryName.ToLower().Contains(searchTerm.ToLower()))
                                  .Skip((pageNumber - 1) * pageSize)
                                  .Take(pageSize)
                                  .ToListAsync();

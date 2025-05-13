@@ -14,8 +14,7 @@ namespace Oto_Api.BackEnd.Controllers.CategoryManager
         {
             this._categoryRepository = categoryRepository;
         }
-        [HttpGet("All_Categories")]
-        [HttpGet("GetAllPaged")]
+        [HttpGet("GetAll_Categories")]
         public async Task<IActionResult> GetAllPaged(int pageNumber = 1, int pageSize = 10)
         {
             var data = await _categoryRepository.GetPagedAsync(pageNumber, pageSize);

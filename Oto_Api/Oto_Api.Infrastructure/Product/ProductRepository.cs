@@ -14,12 +14,12 @@ namespace Oto_Api.Infrastructure.Product
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly IProductRepository _repository;
+       
         private readonly ApplicationDbContext _context;
         private readonly ICategoryRepository _category;
-        public ProductRepository(IProductRepository repository, ApplicationDbContext context, ICategoryRepository category)
+        public ProductRepository( ApplicationDbContext context, ICategoryRepository category)
         {
-            _repository = repository;
+            
             _context = context;
             _category = category;
         }
@@ -34,18 +34,17 @@ namespace Oto_Api.Infrastructure.Product
         {
             return await _context.Products.CountAsync();
         }
-        public async Task<Products> GetProductByIdAsync(int id)
+        public async Task<Products?> GetProductByIdAsync(int id)
         {
             return await _context.Products.FindAsync(id);
         }
-        public async Task<bool> CreateProductAsync(ProductDto product)
+        public async Task<bool> CreateProductAsync( ProductDto productDto)
         {
             try
             {
-                var cate = await _category.GetCategoryByIdAsync(product.CategoryId);
 
                 var productName = await _context.Products
-                    .Where(p => p.ProductName == product.ProductName)
+                    .Where(p => p.ProductName == productDto.ProductName)
                     .FirstOrDefaultAsync();
                 if (productName != null)
                 {
@@ -53,9 +52,9 @@ namespace Oto_Api.Infrastructure.Product
                 }
                 var newProduct = new Products
                 {
-                    ProductName = product.ProductName,
-                    Description = product.Description,
-                    CategoryId = cate.Id,
+                    ProductName = productDto.ProductName,
+                    Description = productDto.Description,
+                    CategoryId = productDto.CategoryId,
 
                 };
                 _context.Products.Add(newProduct);
@@ -77,12 +76,11 @@ namespace Oto_Api.Infrastructure.Product
                 {
                     return false;
                 }
-                else
-                {
+                
                     productById.ProductName = productDto.ProductName;
                     productById.Description = productDto.Description;
                     productById.CategoryId = productDto.CategoryId;
-                }
+                
                 _context.Products.Update(productById);
                 var result = await _context.SaveChangesAsync();
                 return result > 0;
@@ -110,6 +108,16 @@ namespace Oto_Api.Infrastructure.Product
                 throw new Exception("", ex);
             }
 
+        }
+        public async Task<List<Products>> SearchProductAsync(string searchTerm, int pageNumber, int pageSize)
+        {
+            return await _context.Products
+                .Include(p=>p.Categories)
+                .Where(p=>
+                (!string.IsNullOrEmpty(p.ProductName)) && p.ProductName.ToLower().Contains(searchTerm.ToLower())||(!string.IsNullOrEmpty(p.Categories.CategoryName)) && p.Categories.CategoryName.ToLower().Contains(searchTerm.ToLower()))
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
     }
 }

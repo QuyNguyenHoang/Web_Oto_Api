@@ -11,7 +11,7 @@ namespace Oto_Api.Application.DTOs.CategoriesDTOs
 {
     public class CategoriesDto
     {
-        public int Id { get; set; }
+       
         public string? CategoryName {  get; set; }
         public string? Description { get; set; }
 

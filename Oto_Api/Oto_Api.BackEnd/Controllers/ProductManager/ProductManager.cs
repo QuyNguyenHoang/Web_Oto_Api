@@ -31,10 +31,10 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
             });
 
         }
-        [HttpGet("Create_Product")]
-        public async Task<IActionResult> CreateProduct(int id, [FromBody] ProductDto productDto)
+        [HttpPost("Create_Product")]
+        public async Task<IActionResult> CreateProduct( [FromBody] ProductDto productDto)
         {
-            var CreateProduct = await _repository.CreateProductAsync(productDto);
+            var CreateProduct = await _repository.CreateProductAsync( productDto);
             if (!CreateProduct)
             {
                 return BadRequest(new { error = true, message = "Product already exists" });
@@ -44,7 +44,7 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
                 return Ok(new { successfullt = true, message = "Create product successfully!" });
             }
         }
-        [HttpPost("Edit_Product")]
+        [HttpPut("Edit_Product")]
         public async Task<IActionResult> EditProduct(int id, [FromBody] ProductDto productDto)
         {
             var getProduct = await _repository.GetProductByIdAsync(id);
@@ -73,6 +73,24 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
             else
             {
                 return Ok(new { successfully = true, message = $"Delete Product with id = {id} is successfully!" });
+            }
+        }
+        [HttpGet("Search_Product")]
+        public async Task<IActionResult> SearchProduct(string searchTerm, int pageNumber= 1, int pageSize = 5)
+        {
+            var searchResult = await _repository.SearchProductAsync(searchTerm, pageNumber, pageSize);
+            if (searchResult == null || !searchResult.Any())
+            {
+                return NotFound(new { message = " Not found Product" });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    successfully = true,
+                    message = $"This is the result for the product searched with the keyword = {searchTerm}",
+                    data = searchResult
+                });
             }
         }
     }

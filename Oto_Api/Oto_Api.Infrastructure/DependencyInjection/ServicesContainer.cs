@@ -13,6 +13,7 @@ using Oto_Api.Infrastructure.Category;
 using Oto_Api.Infrastructure.Data;
 using Oto_Api.Infrastructure.Product;
 using Oto_Api.Infrastructure.Services;
+using Oto_Api.Infrastructure.Stock;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +94,7 @@ namespace Oto_APIs.Infrastructure.DepnedencyInjection
             services.AddSingleton<IEmailSender, EmailSender>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IStockRepository, StockRepository>();
             return services;
 
         }

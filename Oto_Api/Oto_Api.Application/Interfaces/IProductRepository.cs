@@ -12,9 +12,10 @@ namespace Oto_Api.Application.Interfaces
     {
         Task<List<Products>> GetProductPagedAsync(int pageNumber, int pageSize);
         Task<int> GetTotalCountProductAsync();
-        Task<Products> GetProductByIdAsync(int id);
-        Task<bool> CreateProductAsync(ProductDto product);
+        Task<Products?> GetProductByIdAsync(int id);
+        Task<bool> CreateProductAsync( ProductDto product);
         Task<bool> EditProductAsync(int id, ProductDto productDto);
         Task<bool> DeleteProductAsync(int id);
+        Task<List<Products>> SearchProductAsync(string searchTerm, int pageNumber, int pageSize);
     }
 }

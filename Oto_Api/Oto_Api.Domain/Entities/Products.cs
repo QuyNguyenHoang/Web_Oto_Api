@@ -26,7 +26,7 @@ namespace Oto_Api.Domain.Entities
         public bool IsAvailable { get; set; } = true;
 
         // Khóa ngoại đến Category
-        [ForeignKey("CategoryId")]
+        
         public int CategoryId { get; set; }
         public virtual Categories? Categories { get; set; }
 
