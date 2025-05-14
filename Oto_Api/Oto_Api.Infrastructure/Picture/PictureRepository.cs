@@ -22,7 +22,7 @@ namespace Oto_Api.Infrastructure.Price
         }
         public async Task<List<Pictures>> GetAllPictureAsync()
         {
-            var allPicture= await _context.Pictures.ToListAsync();
+            var allPicture = await _context.Pictures.ToListAsync();
             if (allPicture == null || !allPicture.Any())
             {
                 return new List<Pictures>();
@@ -33,7 +33,7 @@ namespace Oto_Api.Infrastructure.Price
         {
             return await _context.Pictures.CountAsync();
         }
-        public async Task<List<Pictures>> GetPricePageAsync(int pageNumber, int pageSize)
+        public async Task<List<Pictures>> GetPicturePageAsync(int pageNumber, int pageSize)
         {
             return await _context.Pictures
                 .Skip((pageNumber - 1) * pageSize)
@@ -46,49 +46,74 @@ namespace Oto_Api.Infrastructure.Price
         }
         public async Task<bool> CreatePictureAsync(PictureDto pictureDto)
         {
-            var checkUrl = await _context.Pictures
+            try
+            {
+                var checkUrl = await _context.Pictures
                 .Where(p => p.ImageUrl == pictureDto.ImageUrl)
                 .FirstOrDefaultAsync();
-            if (checkUrl != null)
-            {
-                return false;
+                if (checkUrl != null)
+                {
+                    return false;
 
+                }
+                var newPicture = new Pictures
+                {
+                    ImageUrl = pictureDto.ImageUrl,
+                    ProductId = pictureDto.ProductId,
+                };
+                _context.Add(newPicture);
+                var createResult = _context.SaveChanges();
+                return createResult > 0;
             }
-            var newPicture = new Pictures
+            catch (Exception ex)
             {
-                ImageUrl = pictureDto.ImageUrl,
-                ProductId = pictureDto.ProductId,
-            };
-            _context.Add(newPicture);
-            var createResult = _context.SaveChanges();
-            return createResult > 0;
+                throw new Exception("", ex);
+            }
+
+
 
         }
         public async Task<bool> UpdatePictureAsync(int id, PictureDto picturesDto)
         {
-            var updatePicture = await _context.Pictures.FindAsync(id);
-            if (updatePicture == null)
+            try
             {
-                return false;
+                var updatePicture = await _context.Pictures.FindAsync(id);
+                if (updatePicture == null)
+                {
+                    return false;
+                }
+                updatePicture.ImageUrl = picturesDto.ImageUrl;
+                updatePicture.ProductId = updatePicture.ProductId;
+                _context.Update(updatePicture);
+                var updateResult = _context.SaveChanges();
+                return updateResult > 0;
             }
-            updatePicture.ImageUrl = picturesDto.ImageUrl;
-            updatePicture.ProductId = updatePicture.ProductId;
-            _context.Update(updatePicture);
-            var updateResult = _context.SaveChanges();
-            return updateResult > 0;
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+
         }
         public async Task<bool> DeletePictureAsync(int id)
         {
-            var deletePicture = await _context.Pictures.FindAsync(id);
-            if (deletePicture == null)
+            try
             {
-                return false;
+                var deletePicture = await _context.Pictures.FindAsync(id);
+                if (deletePicture == null)
+                {
+                    return false;
+                }
+                _context.Remove(deletePicture);
+                var deleteResult = _context.SaveChanges();
+                return deleteResult > 0;
             }
-            _context.Remove(deletePicture);
-            var deleteResult = _context.SaveChanges();
-            return deleteResult > 0;
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+           
         }
-        public async Task<List<Pictures>> SearchPriceAsync(string searchTerm, int pageNumber = 1, int pageSize = 10)
+        public async Task<List<Pictures>> SearchPictureAsync(string searchTerm, int pageNumber = 1, int pageSize = 10)
         {
 
             return await _context.Pictures

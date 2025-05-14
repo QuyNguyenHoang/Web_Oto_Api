@@ -119,9 +119,9 @@ namespace Oto_Api.BackEnd.Controllers.PriceManager
             }
         }
         [HttpGet("Search_Price")]
-        public async Task<IActionResult> SearchPrice(DateTime searchTerm, int pgaeNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> SearchPrice(DateTime searchTerm, int pageNumber = 1, int pageSize = 10)
         {
-            var searchResult = await _priceRepository.SearchPriceAsync(searchTerm, pgaeNumber, pageSize);
+            var searchResult = await _priceRepository.SearchPriceAsync(searchTerm, pageNumber, pageSize);
             if (searchResult == null || !searchResult.Any())
             {
                 return NotFound(new { message = " Not found Stock" });

@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Oto_Api.Application.DTOs.Auth;
 using Oto_Api.Application.Interfaces;
 using Oto_Api.Domain.Entities;
+using Oto_Api.Infrastructure.Cart;
 using Oto_Api.Infrastructure.Category;
 using Oto_Api.Infrastructure.Data;
 using Oto_Api.Infrastructure.Price;
@@ -97,6 +98,8 @@ namespace Oto_APIs.Infrastructure.DepnedencyInjection
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IStockRepository, StockRepository>();
             services.AddScoped<IPriceRepository, PriceRepository>();
+            services.AddScoped<IPictureRepository, PictureRepository>();
+            services.AddScoped<ICartRepository, CartRepository>();
             return services;
 
         }

@@ -45,62 +45,85 @@ namespace Oto_Api.Infrastructure.Price
         }
         public async Task<bool> CreatePriceAsync(PriceDto priceDto)
         {
-            var checkPrice = await _context.Prices
+            try
+            {
+                var checkPrice = await _context.Prices
                 .Where(p => p.EffectiveDate == priceDto.EffectiveDate)
                 .FirstOrDefaultAsync();
-            if (checkPrice != null)
-            {
-                return false;
+                if (checkPrice != null)
+                {
+                    return false;
 
+                }
+                var newPrice = new Prices
+                {
+                    PriceIn = priceDto.PriceIn,
+                    PriceSale = priceDto.PriceSale,
+                    EffectiveDate = priceDto.EffectiveDate,
+                    ProductId = priceDto.ProductId,
+                };
+                _context.Add(newPrice);
+                var createResult = _context.SaveChanges();
+                return createResult > 0;
             }
-            var newPrice = new Prices
+            catch (Exception ex)
             {
-                PriceIn = priceDto.PriceIn,
-                PriceSale = priceDto.PriceSale,
-                EffectiveDate = priceDto.EffectiveDate,
-                ProductId = priceDto.ProductId,
-            };
-            _context.Add(newPrice);
-            var createResult = _context.SaveChanges();
-            return createResult > 0;
+                throw new Exception("", ex);
+            }
 
         }
         public async Task<bool> UpdatePriceAsync(int id, PriceDto priceDto)
         {
-            var updatePrice = await _context.Prices.FindAsync(id);
-            if (updatePrice == null)
+            try
             {
-                return false;
+                var updatePrice = await _context.Prices.FindAsync(id);
+                if (updatePrice == null)
+                {
+                    return false;
+                }
+                updatePrice.PriceIn = priceDto.PriceIn;
+                updatePrice.PriceSale = priceDto.PriceSale;
+                updatePrice.EffectiveDate = priceDto.EffectiveDate;
+                updatePrice.ProductId = updatePrice.ProductId;
+                _context.Update(updatePrice);
+                var updateResult = _context.SaveChanges();
+                return updateResult > 0;
             }
-            updatePrice.PriceIn = priceDto.PriceIn;
-            updatePrice.PriceSale = priceDto.PriceSale;
-            updatePrice.EffectiveDate = priceDto.EffectiveDate;
-            updatePrice.ProductId = updatePrice.ProductId;
-            _context.Update(updatePrice);
-            var updateResult = _context.SaveChanges();
-            return updateResult > 0;
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+
         }
         public async Task<bool> DeletePriceAsync(int id)
         {
-            var deletePrice = await _context.Prices.FindAsync(id);
-                if (deletePrice == null)
+            try
             {
-                return false;
+                var deletePrice = await _context.Prices.FindAsync(id);
+                if (deletePrice == null)
+                {
+                    return false;
+                }
+                _context.Remove(deletePrice);
+                var deleteResult = _context.SaveChanges();
+                return deleteResult > 0;
             }
-            _context.Remove(deletePrice);
-            var deleteResult = _context.SaveChanges();
-            return deleteResult > 0;
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+
         }
         public async Task<List<Prices>> SearchPriceAsync(DateTime searchTerm, int pageNumber = 1, int pageSize = 10)
         {
-          
-                return await _context.Prices
-                    .Where(p => p.EffectiveDate.Date == searchTerm) 
-                    .OrderBy(p => p.EffectiveDate)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
-           
+
+            return await _context.Prices
+                .Where(p => p.EffectiveDate.Date == searchTerm)
+                .OrderBy(p => p.EffectiveDate)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
         }
 
     }
