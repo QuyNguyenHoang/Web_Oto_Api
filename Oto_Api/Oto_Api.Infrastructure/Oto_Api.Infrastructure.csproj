@@ -29,4 +29,8 @@
     <ProjectReference Include="..\Oto_Api.Domain\Oto_Api.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Picture\" />
+  </ItemGroup>
+
 </Project>

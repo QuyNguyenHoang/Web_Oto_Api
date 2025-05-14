@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Oto_Api.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
@@ -6,16 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Oto_Api.Application.DTOs.PriceDTOs
+namespace Oto_Api.Application.DTOs.PictureDTOs
 {
-    public class PriceDto
+    public class PictureDto
     {
-        public decimal PriceIn { get; set; }
-
-
-        public decimal PriceSale { get; set; }
-
-        public DateTime EffectiveDate { get; set; } = DateTime.Now;
+        public string? ImageUrl { get; set; }
 
         public int ProductId { get; set; }
     }
