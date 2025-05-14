@@ -11,6 +11,7 @@ using Oto_Api.Application.Interfaces;
 using Oto_Api.Domain.Entities;
 using Oto_Api.Infrastructure.Category;
 using Oto_Api.Infrastructure.Data;
+using Oto_Api.Infrastructure.Price;
 using Oto_Api.Infrastructure.Product;
 using Oto_Api.Infrastructure.Services;
 using Oto_Api.Infrastructure.Stock;
@@ -95,6 +96,7 @@ namespace Oto_APIs.Infrastructure.DepnedencyInjection
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IStockRepository, StockRepository>();
+            services.AddScoped<IPriceRepository, PriceRepository>();
             return services;
 
         }
