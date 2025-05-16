@@ -31,6 +31,18 @@ namespace Oto_Api.Infrastructure.Category
         {
             return await _context.Categories.CountAsync();
         }
+        public async Task<int> CountCategoriesAsync(string searchTerm)
+        {
+            var query = _context.Categories.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(c => c.CategoryName.ToLower().Contains(searchTerm));
+            }
+
+            return await query.CountAsync();
+        }
 
         public async Task<CategoriesDto?> GetCategoryByIdAsync(int id)
         {
@@ -125,12 +137,20 @@ namespace Oto_Api.Infrastructure.Category
         }
         public async Task<List<Categories>> SearchCategoriesAsync(string searchTerm, int pageNumber, int pageSize)
         {
-            return await _context.Categories
-                                 .Where(c => c.CategoryName.ToLower().Contains(searchTerm.ToLower()))
-                                 .Skip((pageNumber - 1) * pageSize)
-                                 .Take(pageSize)
-                                 .ToListAsync();
+            var query = _context.Categories.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(c => c.CategoryName.ToLower().Contains(searchTerm));
+            }
+
+            return await query
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToListAsync();
         }
+
 
 
     }

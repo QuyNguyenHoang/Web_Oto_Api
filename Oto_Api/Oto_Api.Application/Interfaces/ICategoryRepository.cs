@@ -13,6 +13,7 @@ namespace Oto_Api.Application.Interfaces
         Task<List<Categories>> GetPagedAsync(int pageNumber, int pageSize);
         Task<int> GetTotalCountAsync();
         Task<CategoriesDto> GetCategoryByIdAsync(int id);
+        Task<int> CountCategoriesAsync(string searchTerm);
         Task<bool> EditCategoryAsync(int id, CategoriesDto categoriesDto);
         Task<bool> DeleteCategoryAsync(int id);
         Task<bool> CreateCategoryAsync(CategoriesDto categoriesDto);
