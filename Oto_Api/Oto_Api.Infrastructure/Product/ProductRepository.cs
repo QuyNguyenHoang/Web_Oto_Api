@@ -26,6 +26,7 @@ namespace Oto_Api.Infrastructure.Product
         public async Task<List<Products>> GetProductPagedAsync(int pageNumber, int pageSize)
         {
             return await _context.Products
+                .OrderBy(p => p.ProductId)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -36,8 +37,13 @@ namespace Oto_Api.Infrastructure.Product
         }
         public async Task<Products?> GetProductByIdAsync(int id)
         {
-            return await _context.Products.FindAsync(id);
+            return await _context.Products
+                .Include(p => p.Pictures)      // load ảnh
+                .Include(p => p.Categories)    // load thể loại nếu cần
+                .FirstOrDefaultAsync(p => p.ProductId == id);
         }
+
+
         public async Task<bool> CreateProductAsync( ProductDto productDto)
         {
             try

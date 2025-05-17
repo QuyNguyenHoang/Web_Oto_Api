@@ -76,17 +76,25 @@ namespace Oto_Api.BackEnd.Controllers.CategoryManager
         [HttpPost("Create_Category")]
         public async Task<IActionResult> CreateCategory([FromBody] CategoriesDto categoriesDto)
         {
-            var CreateCate = await _categoryRepository.CreateCategoryAsync(categoriesDto);
-            if(!CreateCate)
+            try
             {
-                return BadRequest(new { error = true, message = "Category already exists" });
+                var CreateCate = await _categoryRepository.CreateCategoryAsync(categoriesDto);
+                if (!CreateCate)
+                {
+                    return BadRequest(new { error = true, message = "Category already exists" });
+
+                }
+                else
+                {
+                    return Ok(new { successfully = true, message = "Create Category successfully!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = true, message = "Server error: " + ex.Message });
+            }
 
             }
-            else 
-            {
-                return Ok(new {successfully = true, message = "Create Category successfully!"});
-            }
-        }
         [HttpGet("Search")]
         public async Task<IActionResult> SearchCategories(string searchTerm = "", int pageNumber = 1, int pageSize = 3)
         {

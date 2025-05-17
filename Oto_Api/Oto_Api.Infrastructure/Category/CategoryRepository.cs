@@ -130,9 +130,9 @@ namespace Oto_Api.Infrastructure.Category
                 var CreateResult = await _context.SaveChangesAsync();  
                 return CreateResult > 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("", ex);
+                return false;
             }
         }
         public async Task<List<Categories>> SearchCategoriesAsync(string searchTerm, int pageNumber, int pageSize)

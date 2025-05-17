@@ -2,6 +2,7 @@
 using Oto_Api.Application.DTOs.CategoriesDTOs;
 using Oto_Api.Application.DTOs.ProductDTOs;
 using Oto_Api.Application.Interfaces;
+using Oto_Api.Infrastructure.Product;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Oto_Api.BackEnd.Controllers.ProductManager
@@ -30,6 +31,35 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
 
             });
 
+        }
+        [HttpGet("GetProductById/{id}")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            var product = await _repository.GetProductByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound(new { message = "Product not found" });
+            }
+
+            // Map sang DTO nếu cần, hoặc trả thẳng
+            var productDto = new
+            {
+                product.ProductId,
+                product.ProductName,
+                product.Description,
+                product.CreatedDate,
+                product.IsAvailable,
+                product.CategoryId,
+                CategoryName = product.Categories?.CategoryName,
+                Pictures = product.Pictures?.Select(pic => new
+                {
+                    pic.PictureId,
+                    pic.ImageUrl,
+                }),
+               
+            };
+
+            return Ok(productDto);
         }
         [HttpPost("Create_Product")]
         public async Task<IActionResult> CreateProduct( [FromBody] ProductDto productDto)
