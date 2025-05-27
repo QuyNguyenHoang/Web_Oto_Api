@@ -65,9 +65,9 @@ namespace Oto_Api.BackEnd.Controllers.USER.CartManager
             }
         }
         [HttpPut("Update_Cart")]
-        public async Task<IActionResult> UpdateCart(int id, [FromBody] CartDto cartDto)
+        public async Task<IActionResult> UpdateCart(int id, [FromBody] UpdateCartDto updatecartDto)
         {
-            var updateCart = await _cartRepository.UpdateCartAsync(id, cartDto);
+            var updateCart = await _cartRepository.UpdateCartAsync(id, updatecartDto);
             if (!updateCart)
             {
                 return BadRequest(new
@@ -127,6 +127,18 @@ namespace Oto_Api.BackEnd.Controllers.USER.CartManager
             }
 
         }
+        [HttpPost("add")]
+        public async Task<IActionResult> AddToCart([FromBody] CartDto cartDto)
+        {
+            var result = await _cartRepository.AddOrUpdateCartAsync(cartDto);
+
+            if (result)
+                return Ok(new { message = "Add to Cart is successfully!" });
+
+            return BadRequest(new { message = "Can not add to cart" });
+        }
+
+
 
     }
 }

@@ -29,9 +29,17 @@ namespace Oto_Api.Infrastructure.Price
             }
             return allPicture;
         }
-        public async Task<int> PictureCountAsync()
+        public async Task<int> PictureCountAsync(string searchTerm)
         {
-            return await _context.Pictures.CountAsync();
+            var query = _context.Pictures.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(c => c.Product.ProductName.ToLower().Contains(searchTerm));
+            }
+
+            return await query.CountAsync();
         }
         public async Task<List<Pictures>> GetPicturePageAsync(int pageNumber, int pageSize)
         {
@@ -116,13 +124,18 @@ namespace Oto_Api.Infrastructure.Price
         public async Task<List<Pictures>> SearchPictureAsync(string searchTerm, int pageNumber = 1, int pageSize = 10)
         {
 
-            return await _context.Pictures
-                .Where(p => p.ImageUrl == searchTerm)
-                .OrderBy(p => p.ImageUrl)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            var query = _context.Pictures.AsQueryable();
 
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(c => c.Product.ProductName.ToLower().Contains(searchTerm));
+            }
+
+            return await query
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToListAsync();
         }
 
     }

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using IEmailSender = Oto_Api.Application.Interfaces.IEmailSender;
 
@@ -91,6 +92,13 @@ namespace Oto_APIs.Infrastructure.DepnedencyInjection
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             //
             services.AddScoped<IAuthService, AuthService>();
+            // Cấu hình JSON để dùng ReferenceHandler.Preserve
+            //services.AddControllers()
+            //    .AddJsonOptions(options =>
+            //    {
+            //        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            //        options.JsonSerializerOptions.WriteIndented = true; // Cho đẹp (tùy chọn)
+            //    });
             // Đăng ký EmailSender
             services.Configure<EmailSettings>(config.GetSection("EmailSettings"));
             services.AddSingleton<IEmailSender, EmailSender>();
@@ -100,6 +108,7 @@ namespace Oto_APIs.Infrastructure.DepnedencyInjection
             services.AddScoped<IPriceRepository, PriceRepository>();
             services.AddScoped<IPictureRepository, PictureRepository>();
             services.AddScoped<ICartRepository, CartRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
             return services;
 
         }

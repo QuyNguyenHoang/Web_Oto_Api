@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Oto_Api.Application.DTOs.PictureDTOs;
 using Oto_Api.Application.Interfaces;
+using Oto_Api.Infrastructure.Category;
 using Oto_Api.Infrastructure.Price;
 
 namespace Oto_Api.BackEnd.Controllers.PictureManager
@@ -14,7 +15,7 @@ namespace Oto_Api.BackEnd.Controllers.PictureManager
         {
             _pictureRepository = pictureRepository;
         }
-        [HttpGet("GetPictureById")]
+        [HttpGet("GetPictureById/{id}")]
         public async Task<IActionResult> GetPictureById(int id)
         {
             var pictureById = await _pictureRepository.GetPictureByIdAsync(id);
@@ -38,10 +39,10 @@ namespace Oto_Api.BackEnd.Controllers.PictureManager
 
         }
         [HttpGet("GetAll_Picture")]
-        public async Task<IActionResult> GetAllPicture(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllPicture(int pageNumber = 1, int pageSize = 10, string searchTerm="")
         {
             var pictureData = await _pictureRepository.GetPicturePageAsync(pageNumber, pageSize);
-            var pictureCount = await _pictureRepository.PictureCountAsync();
+            var pictureCount = await _pictureRepository.PictureCountAsync(searchTerm);
             return Ok(new
             {
                 pageCurrent = pageNumber,
@@ -73,7 +74,7 @@ namespace Oto_Api.BackEnd.Controllers.PictureManager
                 });
             }
         }
-        [HttpPost("Update_Picture")]
+        [HttpPost("Update_Picture/{id}")]
         public async Task<IActionResult> UpdatePicture(int id, PictureDto pictureDto)
         {
             var updateResult =await _pictureRepository.UpdatePictureAsync(id, pictureDto);
@@ -96,7 +97,7 @@ namespace Oto_Api.BackEnd.Controllers.PictureManager
             }
 
         }
-        [HttpDelete("Delete_Picture")]
+        [HttpDelete("Delete_Picture/{id}")]
         public async Task<IActionResult> DeletePicture(int id)
         {
             var deleteResult = await _pictureRepository.DeletePictureAsync(id);
@@ -119,23 +120,29 @@ namespace Oto_Api.BackEnd.Controllers.PictureManager
             }
            
         }
-        [HttpGet("Search_Picture")]
-        public async Task<IActionResult> SearchPicture(string searchTerm, int pageNumber = 1,int pageSize = 10)
+        [HttpGet("Search")]
+        public async Task<IActionResult> SearchPicture(string searchTerm = "", int pageNumber = 1, int pageSize = 3)
         {
-            var searchResult = await _pictureRepository.SearchPictureAsync(searchTerm, pageNumber, pageSize);
-            if (searchResult == null || !searchResult.Any())
+            var pictureData = await _pictureRepository.SearchPictureAsync(searchTerm, pageNumber, pageSize);
+            var pictureCount = await _pictureRepository.PictureCountAsync(searchTerm);
+
+            if (pictureData == null || !pictureData.Any())
             {
-                return NotFound(new { message = " Not found Picture" });
+                return NotFound(new { message = "No categories found" });
             }
-            else
+
+            var totalPages = (int)Math.Ceiling((double)pictureCount / pageSize);
+
+            return Ok(new
             {
-                return Ok(new
-                {
-                    successfully = true,
-                    message = $"This is the result for the Picture searched with the keyword = {searchTerm}",
-                    data = searchResult
-                });
-            }
+                data = pictureData,
+                currentPage = pageNumber,
+
+                pageSize = pageSize,
+                totalRecords = pictureCount,
+                totalPages = (int)Math.Ceiling((double)pictureCount / pageSize),
+
+            });
         }
     }
 }

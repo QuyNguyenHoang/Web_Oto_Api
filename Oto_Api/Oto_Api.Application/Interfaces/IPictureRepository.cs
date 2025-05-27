@@ -16,7 +16,7 @@ namespace Oto_Api.Application.Interfaces
         Task<bool> CreatePictureAsync(PictureDto pictureDto);
         Task<Pictures?> GetPictureByIdAsync(int id);
         Task<List<Pictures>> GetPicturePageAsync(int pageNumber, int pageSize);
-        Task<int> PictureCountAsync();
+        Task<int> PictureCountAsync(string searchTerm);
         Task<List<Pictures>> GetAllPictureAsync();
     }
 }

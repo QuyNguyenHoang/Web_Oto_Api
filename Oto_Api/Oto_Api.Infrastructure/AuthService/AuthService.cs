@@ -146,26 +146,29 @@ namespace Oto_Api.Infrastructure.Services
 
         public async Task<string> LoginAsync(LoginDto loginDto)
         {
-
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null)
                 return "Tài khoản hoặc mật khẩu sai.";
+
             if (!user.EmailConfirmed)
                 return "Vui lòng xác thực Email để đăng nhập";
+
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
             if (!result.Succeeded)
                 return "Tài khoản hoặc mật khẩu sai.";
 
-            // Tạo token
+            // Tạo claims cho JWT
             var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
+    {
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.NameIdentifier, user.Id), // 👈 Thêm UserId
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    };
+
             var userRoles = await _userManager.GetRolesAsync(user);
             foreach (var role in userRoles)
             {
-                authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
             }
 
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -180,5 +183,6 @@ namespace Oto_Api.Infrastructure.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

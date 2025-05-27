@@ -6,13 +6,18 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Oto_Api.Application.DTOs.PictureDTOs;
+using Oto_Api.Application.DTOs.ProductDTOs;
 
 namespace Oto_Api.Application.DTOs.CartDTOs
 {
     public class CartDto
     {
-        public string? Id { get; set; }
+        [Key]
+        public int CartId { get; set; }  // Khóa chính
+        public string? UserId { get; set; }
         public int ProductId { get; set; }
+        public string? ProductName { get; set; }
         public int Quantity { get; set; }
         public decimal? Price { get; set; }
 
@@ -29,7 +34,11 @@ namespace Oto_Api.Application.DTOs.CartDTOs
         public string? SessionId { get; set; }
 
         public string? ShippingMethod { get; set; }
-        public DateTime? EstimatedDeliveryDate { get; set; } //Ngay giao hang du kien
+        public DateTime? EstimatedDeliveryDate { get; set; }
+        public List<PictureDto>? Pictures { get; set; }
+        public decimal? Prices { get; set; }
+
+       public ProductDto? Products { get; set; }
 
     }
 }

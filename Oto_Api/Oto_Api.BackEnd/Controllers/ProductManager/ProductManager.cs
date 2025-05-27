@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Oto_Api.Application.DTOs.CategoriesDTOs;
 using Oto_Api.Application.DTOs.ProductDTOs;
 using Oto_Api.Application.Interfaces;
@@ -19,19 +20,28 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
         [HttpGet("GetAll_Product")]
         public async Task<IActionResult> GetAllProduct(int pageNumber = 1, int pageSize = 10)
         {
-            var ProductData = await _repository.GetProductPagedAsync(pageNumber, pageSize);
-            var ProductTotal = await _repository.GetTotalCountProductAsync();
+            var productData = await _repository.GetProductPagedAsync(pageNumber, pageSize);
+            var productTotal = await _repository.GetTotalCountProductAsync();
+
             return Ok(new
             {
                 currentPage = pageNumber,
                 pageSize = pageSize,
-                totalRecords = ProductTotal,
-                totalPages = (int)Math.Ceiling((double)ProductTotal / pageSize),
-                data = ProductData
-
+                totalRecords = productTotal,
+                totalPages = (int)Math.Ceiling((double)productTotal / pageSize),
+                data = productData
             });
-
         }
+        [HttpGet("products")]
+        public async Task<IActionResult> GetProducts()
+        {
+            var products = await _repository.GetProductAsync();
+            
+
+            return Ok(products);
+        }
+
+
         [HttpGet("GetProductById/{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -42,24 +52,13 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
             }
 
             // Map sang DTO nếu cần, hoặc trả thẳng
-            var productDto = new
-            {
-                product.ProductId,
-                product.ProductName,
-                product.Description,
-                product.CreatedDate,
-                product.IsAvailable,
-                product.CategoryId,
-                CategoryName = product.Categories?.CategoryName,
-                Pictures = product.Pictures?.Select(pic => new
-                {
-                    pic.PictureId,
-                    pic.ImageUrl,
-                }),
-               
-            };
+            var productById = await _repository.GetProductByIdAsync(id);
 
-            return Ok(productDto);
+            return Ok(new
+            {
+                successfully = true,
+                data = productById
+            });
         }
         [HttpPost("Create_Product")]
         public async Task<IActionResult> CreateProduct( [FromBody] ProductDto productDto)

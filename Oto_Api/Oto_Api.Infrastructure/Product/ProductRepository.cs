@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Oto_Api.Application.DTOs.PictureDTOs;
+using Oto_Api.Application.DTOs.PriceDTOs;
 using Oto_Api.Application.DTOs.ProductDTOs;
 using Oto_Api.Application.Interfaces;
 using Oto_Api.Domain.Entities;
@@ -14,37 +16,81 @@ namespace Oto_Api.Infrastructure.Product
 {
     public class ProductRepository : IProductRepository
     {
-       
+
         private readonly ApplicationDbContext _context;
         private readonly ICategoryRepository _category;
-        public ProductRepository( ApplicationDbContext context, ICategoryRepository category)
+        public ProductRepository(ApplicationDbContext context, ICategoryRepository category)
         {
-            
+
             _context = context;
             _category = category;
         }
-        public async Task<List<Products>> GetProductPagedAsync(int pageNumber, int pageSize)
+
+        public async Task<List<ProductDto>> GetProductPagedAsync(int pageNumber, int pageSize)
         {
             return await _context.Products
-                .OrderBy(p => p.ProductId)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+    .Include(p => p.Pictures)
+    .Include(p => p.Prices)
+    .OrderBy(p => p.ProductId)
+    .Skip((pageNumber - 1) * pageSize)
+    .Take(pageSize)
+    .Select(p => new ProductDto
+    {
+        ProductId = p.ProductId,
+        ProductName = p.ProductName,
+        Description = p.Description,
+        CreatedDate = p.CreatedDate,
+        IsAvailable = p.IsAvailable,
+        CategoryId = p.CategoryId,
+        Pictures = p.Pictures.Select(pic => new PictureDto
+        {
+            ImageUrl = pic.ImageUrl
+        }).ToList(),
+        Prices = p.Prices.OrderByDescending(price => price.EffectiveDate).Select(price => price.PriceSale).FirstOrDefault()
+    })
+    .ToListAsync();
+
         }
+        public async Task<List<Products>> GetProductAsync()
+        {
+            return await _context.Products.ToListAsync();
+        }
+
         public async Task<int> GetTotalCountProductAsync()
         {
             return await _context.Products.CountAsync();
         }
-        public async Task<Products?> GetProductByIdAsync(int id)
+        public async Task<ProductDto?> GetProductByIdAsync(int id)
         {
             return await _context.Products
-                .Include(p => p.Pictures)      // load ảnh
-                .Include(p => p.Categories)    // load thể loại nếu cần
-                .FirstOrDefaultAsync(p => p.ProductId == id);
+                .Include(p => p.Pictures)
+                .Include(p => p.Categories)
+                .Where(p => p.ProductId == id)
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Description = p.Description,
+                    CreatedDate = p.CreatedDate,
+                    IsAvailable = p.IsAvailable,
+                    CategoryId = p.CategoryId,
+                    Pictures = p.Pictures.Select(pic => new PictureDto
+                    {
+                        ImageUrl = pic.ImageUrl
+                    }).ToList(),
+                    Prices = p.Prices.OrderByDescending(price => price.EffectiveDate).Select(price => price.PriceSale).FirstOrDefault()
+                })
+                .FirstOrDefaultAsync();
+        }
+        public async Task<List<Products>> GetProductFullOptionAsync()
+        {
+            return await _context.Products
+                .Include(p => p.Pictures)
+                .Include(p => p.Categories)
+                .ToListAsync();
         }
 
-
-        public async Task<bool> CreateProductAsync( ProductDto productDto)
+        public async Task<bool> CreateProductAsync(ProductDto productDto)
         {
             try
             {
@@ -82,11 +128,11 @@ namespace Oto_Api.Infrastructure.Product
                 {
                     return false;
                 }
-                
-                    productById.ProductName = productDto.ProductName;
-                    productById.Description = productDto.Description;
-                    productById.CategoryId = productDto.CategoryId;
-                
+
+                productById.ProductName = productDto.ProductName;
+                productById.Description = productDto.Description;
+                productById.CategoryId = productDto.CategoryId;
+
                 _context.Products.Update(productById);
                 var result = await _context.SaveChangesAsync();
                 return result > 0;
@@ -118,9 +164,9 @@ namespace Oto_Api.Infrastructure.Product
         public async Task<List<Products>> SearchProductAsync(string searchTerm, int pageNumber, int pageSize)
         {
             return await _context.Products
-                .Include(p=>p.Categories)
-                .Where(p=>
-                (!string.IsNullOrEmpty(p.ProductName)) && p.ProductName.ToLower().Contains(searchTerm.ToLower())||(!string.IsNullOrEmpty(p.Categories.CategoryName)) && p.Categories.CategoryName.ToLower().Contains(searchTerm.ToLower()))
+                .Include(p => p.Categories)
+                .Where(p =>
+                (!string.IsNullOrEmpty(p.ProductName)) && p.ProductName.ToLower().Contains(searchTerm.ToLower()) || (!string.IsNullOrEmpty(p.Categories.CategoryName)) && p.Categories.CategoryName.ToLower().Contains(searchTerm.ToLower()))
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
