@@ -1,8 +1,9 @@
 ﻿using Oto_Api.Application.DTOs.OderDTO;
+using Oto_Api.Application.Interfaces;
 using Oto_Api.Domain.Entities;
 using Oto_Api.Infrastructure.Data;
 
-public class OrderRepository
+public class OrderRepository:IOrderRepository
 {
     private readonly ApplicationDbContext _context;
 

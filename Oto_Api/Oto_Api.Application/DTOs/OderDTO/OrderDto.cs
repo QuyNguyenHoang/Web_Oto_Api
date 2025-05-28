@@ -10,8 +10,8 @@ namespace Oto_Api.Application.DTOs.OderDTO
     {
         public string Id { get; set; }
         public decimal TotalAmount { get; set; }
-        public string ShippingAddress { get; set; }
-        public List<OrderDetailDto> OrderDetails { get; set; }
+        public string? ShippingAddress { get; set; }
+        public List<OrderDetailDto>? OrderDetails { get; set; }
     }
     public class OrderDetailDto
     {
