@@ -17,7 +17,8 @@ namespace Oto_Api.Application.Interfaces
         Task<bool> CreateProductAsync( ProductDto product);
         Task<bool> EditProductAsync(int id, ProductDto productDto);
         Task<bool> DeleteProductAsync(int id);
-        Task<List<Products>> SearchProductAsync(string searchTerm, int pageNumber, int pageSize);
+        Task<List<ProductDto>> SearchProductAsync(string searchTerm, int pageNumber, int pageSize);
         Task<List<Products>> GetProductFullOptionAsync();
+        Task<int> CountProductAsync(string searchTerm);
     }
 }

@@ -19,6 +19,11 @@ namespace Oto_Api.Infrastructure.Category
         {
             _context = context;
         }
+
+        public async Task<List<Categories>> GetCategoriesAsync()
+        {
+            return await _context.Categories.ToListAsync();
+        }
         public async Task<List<Categories>> GetPagedAsync(int pageNumber, int pageSize)
         {
             return await _context.Categories

@@ -161,15 +161,53 @@ namespace Oto_Api.Infrastructure.Product
             }
 
         }
-        public async Task<List<Products>> SearchProductAsync(string searchTerm, int pageNumber, int pageSize)
+        public async Task<List<ProductDto>> SearchProductAsync(string searchTerm, int pageNumber, int pageSize)
         {
-            return await _context.Products
-                .Include(p => p.Categories)
-                .Where(p =>
-                (!string.IsNullOrEmpty(p.ProductName)) && p.ProductName.ToLower().Contains(searchTerm.ToLower()) || (!string.IsNullOrEmpty(p.Categories.CategoryName)) && p.Categories.CategoryName.ToLower().Contains(searchTerm.ToLower()))
+            var query = _context.Products
+                .Include(p => p.Pictures)
+                .Include(p => p.Prices)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(p => p.ProductName.ToLower().Contains(searchTerm));
+            }
+
+            return await query
+                .OrderBy(p => p.ProductId) // hoặc theo trường nào đó phù hợp để ổn định thứ tự
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Description = p.Description,
+                    CreatedDate = p.CreatedDate,
+                    IsAvailable = p.IsAvailable,
+                    CategoryId = p.CategoryId,
+                    Pictures = p.Pictures.Select(pic => new PictureDto
+                    {
+                        ImageUrl = pic.ImageUrl
+                    }).ToList(),
+                    Prices = p.Prices.OrderByDescending(price => price.EffectiveDate)
+                                      .Select(price => price.PriceSale)
+                                      .FirstOrDefault()
+                })
                 .ToListAsync();
+        }
+    
+        public async Task<int> CountProductAsync(string searchTerm)
+        {
+            var query = _context.Products.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(c => c.ProductName.ToLower().Contains(searchTerm));
+            }
+
+            return await query.CountAsync();
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Oto_Api.Application.DTOs.CategoriesDTOs;
 using Oto_Api.Application.DTOs.ProductDTOs;
 using Oto_Api.Application.Interfaces;
+using Oto_Api.Infrastructure.Category;
 using Oto_Api.Infrastructure.Product;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -51,7 +52,7 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
                 return NotFound(new { message = "Product not found" });
             }
 
-            // Map sang DTO nếu cần, hoặc trả thẳng
+           
             var productById = await _repository.GetProductByIdAsync(id);
 
             return Ok(new
@@ -73,7 +74,7 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
                 return Ok(new { successfullt = true, message = "Create product successfully!" });
             }
         }
-        [HttpPut("Edit_Product")]
+        [HttpPut("Edit_Product/{id}")]
         public async Task<IActionResult> EditProduct(int id, [FromBody] ProductDto productDto)
         {
             var getProduct = await _repository.GetProductByIdAsync(id);
@@ -91,7 +92,7 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
                 return Ok(new { successfully = true, message = $"Update Product is successfully!" });
             }
         }
-        [HttpDelete("Delete_Product")]
+        [HttpDelete("Delete_Product/{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var deleteProduct = await _repository.DeleteProductAsync(id);
@@ -105,22 +106,29 @@ namespace Oto_Api.BackEnd.Controllers.ProductManager
             }
         }
         [HttpGet("Search_Product")]
-        public async Task<IActionResult> SearchProduct(string searchTerm, int pageNumber= 1, int pageSize = 5)
+        public async Task<IActionResult> SearchProduct(string searchTerm = "", int pageNumber= 1, int pageSize = 5)
         {
-            var searchResult = await _repository.SearchProductAsync(searchTerm, pageNumber, pageSize);
-            if (searchResult == null || !searchResult.Any())
+            var products = await _repository.SearchProductAsync(searchTerm, pageNumber, pageSize);
+            var totalCount = await _repository.CountProductAsync(searchTerm);
+
+            if (products == null || !products.Any())
             {
-                return NotFound(new { message = " Not found Product" });
+                return NotFound(new { message = "No product found" });
             }
-            else
+
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            return Ok(new
             {
-                return Ok(new
-                {
-                    successfully = true,
-                    message = $"This is the result for the product searched with the keyword = {searchTerm}",
-                    data = searchResult
-                });
-            }
+                data = products,
+                currentPage = pageNumber,
+
+                pageSize = pageSize,
+                totalRecords = totalCount,
+                totalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+
+            });
         }
     }
+    
 }

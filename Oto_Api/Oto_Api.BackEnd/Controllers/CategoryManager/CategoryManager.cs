@@ -96,7 +96,7 @@ namespace Oto_Api.BackEnd.Controllers.CategoryManager
 
             }
         [HttpGet("Search")]
-        public async Task<IActionResult> SearchCategories(string searchTerm = "", int pageNumber = 1, int pageSize = 3)
+        public async Task<IActionResult> SearchCategories(string searchTerm = "", int pageNumber = 1, int pageSize = 10)
         {
             var categories = await _categoryRepository.SearchCategoriesAsync(searchTerm, pageNumber, pageSize);
             var totalCount = await _categoryRepository.CountCategoriesAsync(searchTerm);
@@ -118,6 +118,20 @@ namespace Oto_Api.BackEnd.Controllers.CategoryManager
                 totalPages = (int)Math.Ceiling((double)totalCount / pageSize),
                
             });
+        }
+
+        [HttpGet("Get_Categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var result = await _categoryRepository.GetCategoriesAsync();
+            if (result == null || !result.Any())
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(result);
+            }
         }
 
 

@@ -1,9 +1,10 @@
-﻿using Oto_Api.Application.DTOs.OderDTO;
+﻿using Microsoft.EntityFrameworkCore;
+using Oto_Api.Application.DTOs.OderDTO;
 using Oto_Api.Application.Interfaces;
 using Oto_Api.Domain.Entities;
 using Oto_Api.Infrastructure.Data;
 
-public class OrderRepository:IOrderRepository
+public class OrderRepository : IOrderRepository
 {
     private readonly ApplicationDbContext _context;
 
@@ -47,4 +48,36 @@ public class OrderRepository:IOrderRepository
             return false;
         }
     }
+    public async Task<List<Orders>> GetOrdersByUserIdAsync(string Id)
+    {
+        var listOrder = await _context.Orders
+            .Where(o => o.Id == Id)
+            .ToListAsync();
+
+        return listOrder;
+    }
+    public async Task<OrderDto?> GetOrderWithDetailsAsync(int orderId)
+    {
+        var order = await _context.Orders
+            .Include(o => o.OrderDetails)
+            .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+        if (order == null) return null;
+
+        var orderDto = new OrderDto
+        {
+            Id = order.Id, // hoặc order.Id nếu Id là string
+            TotalAmount = (decimal)order.TotalAmount,
+            ShippingAddress = order.ShippingAddress,
+            OrderDetails = order.OrderDetails?.Select(od => new OrderDetailDto
+            {
+                ProductId = od.ProductId,
+                Quantity = od.Quantity,
+                Price = od.Price
+            }).ToList()
+        };
+
+        return orderDto;
+    }
 }
+

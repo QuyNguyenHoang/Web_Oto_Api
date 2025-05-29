@@ -18,5 +18,6 @@ namespace Oto_Api.Application.Interfaces
         Task<bool> DeleteCategoryAsync(int id);
         Task<bool> CreateCategoryAsync(CategoriesDto categoriesDto);
         Task<List<Categories>> SearchCategoriesAsync(string searchTerm, int pageNumber, int pageSize);
+        Task<List<Categories>> GetCategoriesAsync();
     }
 }

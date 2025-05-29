@@ -121,7 +121,7 @@ namespace Oto_Api.BackEnd.Controllers.PictureManager
            
         }
         [HttpGet("Search")]
-        public async Task<IActionResult> SearchPicture(string searchTerm = "", int pageNumber = 1, int pageSize = 3)
+        public async Task<IActionResult> SearchPicture(string searchTerm = "", int pageNumber = 1, int pageSize = 10)
         {
             var pictureData = await _pictureRepository.SearchPictureAsync(searchTerm, pageNumber, pageSize);
             var pictureCount = await _pictureRepository.PictureCountAsync(searchTerm);

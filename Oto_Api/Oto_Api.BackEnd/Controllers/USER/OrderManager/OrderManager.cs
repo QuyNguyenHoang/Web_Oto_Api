@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Oto_Api.Application.DTOs.OderDTO;
 using Oto_Api.Application.Interfaces;
 
@@ -26,6 +27,34 @@ namespace Oto_Api.BackEnd.Controllers.USER.OrderManager
             else
                 return StatusCode(500, new { success = false, message = "Đặt hàng thất bại" });
         }
+        [HttpGet("GetOrderByUser/{id}")]
+        public async Task<IActionResult> GetOrdersByUserId(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Thiếu userId");
+            }
+
+            var orders = await _orderRepository.GetOrdersByUserIdAsync(id);
+
+            if (orders == null || !orders.Any())
+            {
+                return NotFound("Không tìm thấy đơn hàng nào cho người dùng này.");
+            }
+
+            return Ok(orders); 
+        }
+        [HttpGet("GetOrderDetail/{orderId}")]
+        public async Task<ActionResult<OrderDto>> GetOrderDetail(int orderId)
+        {
+            var order = await _orderRepository.GetOrderWithDetailsAsync(orderId);
+
+            if (order == null)
+                return NotFound(new { message = "Không tìm thấy đơn hàng." });
+
+            return Ok(order);
+        }
+
 
     }
 }
