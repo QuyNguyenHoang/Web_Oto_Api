@@ -14,6 +14,12 @@ namespace Oto_Api.Application.DTOs.OderDTO
         public string? Id { get; set; }
         public decimal TotalAmount { get; set; }
         public string? ShippingAddress { get; set; }
+        public DateTime? OrderDate { get; set; }
+        public string? UserName { get; set; }
+        public bool? Status { get; set; }
+        
+
+
         public List<OrderDetailDto>? OrderDetails { get; set; }
     }
     public class OrderDetailDto
@@ -24,6 +30,8 @@ namespace Oto_Api.Application.DTOs.OderDTO
         public int Quantity { get; set; }
         public decimal Price { get; set; }
 
-       
+        //
+        public string? ProductName { get; set; }
     }
+
 }

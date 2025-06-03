@@ -13,5 +13,10 @@ namespace Oto_Api.Application.Interfaces
        Task<bool> CreateOrderAsync(OrderDto dto);
         Task<List<Orders>> GetOrdersByUserIdAsync(string Id);
         Task<OrderDto> GetOrderWithDetailsAsync(int orderId);
+        Task<List<OrderDto>> SearchOrderAsync(string searchTerm, int pageSize, int pageNumber, bool? statusFilter = null);
+        Task<bool> UpdateOrderAsync(OrderDto dto, int id);
+        Task<int> CountOrderAsync(string searchTerm, bool? statusFilter = null);
+        Task<OrderDto?> GetOrderByIdAsync(int id);
+        Task<Orders?> DeleteOrderAsync(int id);
     }
 }

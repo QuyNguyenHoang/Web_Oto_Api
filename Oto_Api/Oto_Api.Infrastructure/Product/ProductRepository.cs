@@ -132,6 +132,7 @@ namespace Oto_Api.Infrastructure.Product
                 productById.ProductName = productDto.ProductName;
                 productById.Description = productDto.Description;
                 productById.CategoryId = productDto.CategoryId;
+                productById.IsAvailable = productDto.IsAvailable;
 
                 _context.Products.Update(productById);
                 var result = await _context.SaveChangesAsync();

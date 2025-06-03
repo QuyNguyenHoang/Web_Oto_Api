@@ -15,6 +15,7 @@ using Oto_Api.Infrastructure.Data;
 using Oto_Api.Infrastructure.Price;
 using Oto_Api.Infrastructure.Product;
 using Oto_Api.Infrastructure.Services;
+using Oto_Api.Infrastructure.StatisticsOrder;
 using Oto_Api.Infrastructure.Stock;
 using System;
 using System.Collections.Generic;
@@ -109,6 +110,7 @@ namespace Oto_APIs.Infrastructure.DepnedencyInjection
             services.AddScoped<IPictureRepository, PictureRepository>();
             services.AddScoped<ICartRepository, CartRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderStatisticsRepository, OrderStatisticsRepository>();
             return services;
 
         }

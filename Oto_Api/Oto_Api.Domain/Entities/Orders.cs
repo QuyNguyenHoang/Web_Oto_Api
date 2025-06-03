@@ -21,7 +21,7 @@ namespace Oto_Api.Domain.Entities
         public decimal? TotalAmount { get; set; }
         public int? VoucherId { get; set; }
         public int? ShipperId { get; set; }
-        public string? Status { get; set; } = "Pending";
+        public bool? Status { get; set; }
 
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
