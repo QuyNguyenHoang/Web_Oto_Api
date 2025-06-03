@@ -17,6 +17,7 @@ using Oto_Api.Infrastructure.Product;
 using Oto_Api.Infrastructure.Services;
 using Oto_Api.Infrastructure.StatisticsOrder;
 using Oto_Api.Infrastructure.Stock;
+using Oto_Api.Infrastructure.UserInfRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,6 +112,7 @@ namespace Oto_APIs.Infrastructure.DepnedencyInjection
             services.AddScoped<ICartRepository, CartRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderStatisticsRepository, OrderStatisticsRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
 
         }

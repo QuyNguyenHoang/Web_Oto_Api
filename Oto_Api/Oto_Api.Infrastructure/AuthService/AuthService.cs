@@ -161,7 +161,7 @@ namespace Oto_Api.Infrastructure.Services
             var authClaims = new List<Claim>
     {
         new Claim(ClaimTypes.Email, user.Email),
-        new Claim(ClaimTypes.NameIdentifier, user.Id), // 👈 Thêm UserId
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
